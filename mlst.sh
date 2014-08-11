@@ -32,7 +32,8 @@ if [ $? -gt 0 ]; then echo "ERROR: You need to run this from the main MLST direc
     continue;
   fi;
   wget "$URL$i" -O db/$i.fasta; 
-  legacy_blast.pl formatdb -i db/$i.fasta -p F; 
+  #legacy_blast.pl formatdb -i db/$i.fasta -p F;
+  makeblastdb -in db/$i.fasta -parse_seqids -hash_index -dbtype nucl;
 done;) >> $logfile 2>&1
 cd -;
 
@@ -53,7 +54,8 @@ jobsRunning=0;
       continue;
     fi;
     # make the blast output file
-    legacy_blast.pl blastall -p blastn -F F -d db/$i.fasta -i assemblies/$asm.fasta -m 8 -a 1 | sort -k12,12nr | head -n 1 2>blast/"$asm"_"$i".blast.err 1>blast/"$asm"_"$i".blast.out.tmp
+    #legacy_blast.pl blastall -p blastn -F F -d db/$i.fasta -i assemblies/$asm.fasta -m 8 -a 1 | sort -k12,12nr | head -n 1 2>blast/"$asm"_"$i".blast.err 1>blast/"$asm"_"$i".blast.out.tmp
+    #blastn -db db/$i.fasta -query /your_path_to/gnome_file -out 
     if [ $? -gt 0 ]; then echo "ERROR: PROBLEM WITH BLASTn" >> $logfile; exit 1; fi;
     mv blast/"$asm"_"$i".blast.out.tmp blast/"$asm"_"$i".blast.out >> $logfile 2>&1
     if [ $? -gt 0 ]; then exit 1; fi;
